@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>簡單買 EasyBuy - 質感生活全功能平台</title>
+    <style>
+        /* ==========================================================================
+           1. 全域變數與基礎設定 (統一風格：溫暖大地色系)
+           ========================================================================== */
+        :root {
+            --bg-canvas: #f4f3f0;
+            --bg-card: #ffffff;
+            --container-gray: #8e8d8a;
+            --container-dark: #3a3a3a;
+            --text-primary: #4a3b32;
+            --text-muted: #7d7571;
+            --brand-primary: #e28743;   /* 溫暖橘 */
+            --brand-secondary: #f5b041; /* 亮橘黃 */
+            --accent-red: #cd6155;
+            --border-light: #d8d3cd;
+            --shadow-sm: 0 4px 6px rgba(0,0,0,0.04);
+            --shadow-md: 0 10px 25px rgba(74,59,50,0.08);
+            --radius-capsule: 30px;
+            --radius-card: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 主容器 */
+        .web-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            flex: 1;
+        }
+
+        /* 頁面切換基礎 */
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* ==========================================================================
+           2. 統一頂部導覽列 (Sticky Header)
+           ========================================================================== */
+        header {
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--brand-primary);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .nav-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: var(--radius-capsule);
+            font-size: 15px;
+        }
+        .nav-btn:hover {
+            background-color: var(--bg-canvas);
+            color: var(--brand-primary);
+        }
+        .nav-btn.active {
+            background-color: var(--brand-primary);
+            color: #fff;
+        }
+
+        .nav-divider {
+            width: 1px;
+            height: 20px;
+            background-color: var(--border-light);
+            margin: 0 4px;
+        }
+
+        /* ==========================================================================
+           3. 共用元件樣式 (彈窗、表單、卡片、按鈕)
+           ========================================================================== */
+        /* 彈窗 Mask */
+        .modal-mask {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(74, 59, 50, 0.4);
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .custom-dialog {
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .dialog-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+        }
+        .dialog-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .dialog-btn {
+            padding: 10px 24px;
+            border-radius: var(--radius-capsule);
+            font-size: 15px;
+        }
+        .dialog-btn-secondary {
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+        }
+        .dialog-btn-primary {
+            background-color: var(--brand-primary);
+            color: white;
+        }
+
+        /* 輸入框膠囊 */
+        .input-capsule {
+            background-color: #fff;
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-capsule);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-sm);
+        }
+        .input-capsule label {
+            font-weight: bold;
+            color: var(--text-primary);
+            white-space: nowrap;
+            min-width: 70px;
+        }
+        .input-capsule input, .input-capsule textarea, .input-capsule select {
+            border: none;
+            outline: none;
+            width: 100%;
+            color: var(--text-primary);
+            background: transparent;
+            font-size: 15px;
+        }
+
+        /* 大顆標準按鈕 */
+        .btn-brand-primary {
+            background-color: var(--brand-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: var(--radius-capsule);
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(226, 135, 67, 0.2);
+        }
+        .btn-brand-secondary {
+            background-color: var(--brand-secondary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: var(--radius-capsule);
+            font-size: 16px;
+        }
+        .btn-dark-primary {
+            background-color: var(--container-dark);
+            color: white;
+            padding: 12px 30px;
+            border-radius: var(--radius-capsule);
+            font-size: 16px;
+        }
+
+        /* 商品卡片基礎 */
+        .prod-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .prod-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .prod-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        .prod-img-placeholder {
+            height: 180px;
+            background-color: #edeae4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        .prod-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .prod-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .prod-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.4;
+            flex: 1;
+        }
+        .prod-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        .prod-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--brand-primary);
+        }
+
+        /* ==========================================================================
+           4. [新增首頁] 獨立首頁樣式 (Hero Section + 精選展示)
+           ========================================================================== */
+        .hero-section {
+            background: linear-gradient(rgba(74, 59, 50, 0.4), rgba(74, 59, 50, 0.4)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1200');
+            background-size: cover;
+            background-position: center;
+            height: 380px;
+            border-radius: var(--radius-card);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 0 20px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-md);
+        }
+        .hero-section h1 {
+            font-size: 40px;
+            margin-bottom: 12px;
+            font-weight: 900;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .hero-section p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            opacity: 0.95;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* ==========================================================================
+           5. [新分類佈局] 購物商城與側邊分類欄
+           ========================================================================== */
+        .mall-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 850px) {
+            .mall-layout { grid-template-columns: 1fr; }
+        }
+
+        .category-sidebar {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 24px 18px;
+            border: 1px solid var(--border-light);
+            height: fit-content;
+            box-shadow: var(--shadow-sm);
+        }
+        .category-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-canvas);
+            color: var(--text-primary);
+        }
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            text-align: left;
+            padding: 12px 15px;
+            color: var(--text-muted);
+            font-weight: bold;
+            border-radius: 12px;
+            margin-bottom: 6px;
+            background: transparent;
+        }
+        .category-item:hover, .category-item.active {
+            background-color: var(--bg-canvas);
+            color: var(--brand-primary);
+        }
+        .category-count {
+            font-size: 12px;
+            background-color: #edeae4;
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: var(--text-muted);
+        }
+        .category-item.active .category-count {
+            background-color: var(--brand-primary);
+            color: white;
+        }
+
+        .search-row-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-capsule);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 350px;
+            width: 100%;
+            box-shadow: var(--shadow-sm);
+        }
+        .search-box input {
+            border: none; outline: none; width: 100%; color: var(--text-primary); font-size: 15px;
+        }
+
+        /* 購物車/結帳與訂單追蹤卡片 */
+        .wide-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 5px solid var(--brand-primary);
+            padding-left: 10px;
+        }
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } }
+
+        /* 時間軸 物流追蹤 */
+        .timeline-container {
+            margin-top: 15px;
+            border-left: 3px solid var(--border-light);
+            padding-left: 20px;
+            margin-left: 10px;
+        }
+        .timeline-node {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .timeline-node::before {
+            content: '';
+            position: absolute;
+            left: -27px; top: 4px;
+            width: 11px; height: 11px;
+            border-radius: 50%;
+            background-color: var(--border-light);
+            border: 2px solid var(--bg-card);
+        }
+        .timeline-node.active-node::before {
+            background-color: var(--brand-primary);
+            box-shadow: 0 0 0 4px rgba(226,135,67,0.2);
+        }
+        .timeline-meta {
+            display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-bottom: 4px;
+        }
+        .timeline-desc {
+            font-size: 13px; color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           6. [模組二] 賣家後台管理頁面
+           ========================================================================== */
+        .seller-dashboard {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) { .seller-dashboard { grid-template-columns: 1fr; } }
+        
+        .seller-menu {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 20px 15px;
+            border: 1px solid var(--border-light);
+            height: fit-content;
+        }
+        .seller-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: var(--text-primary);
+            font-weight: bold;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        .seller-menu-item:hover, .seller-menu-item.active {
+            background-color: #edeae4;
+            color: var(--brand-primary);
+        }
+
+        .seller-status-badge {
+            padding: 4px 10px;
+            border-radius: var(--radius-capsule);
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-onsale { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-offsale { background-color: #ffebee; color: #c62828; }
+
+        /* ==========================================================================
+           7. [模組三] 會員登入與會員中心頁面
+           ========================================================================== */
+        .auth-container {
+            max-width: 450px;
+            margin: 40px auto;
+            background-color: var(--bg-card);
+            padding: 40px 30px;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+        .auth-tabs {
+            display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid var(--border-light); padding-bottom: 10px;
+        }
+        .auth-tab-btn {
+            background: transparent; font-size: 18px; color: var(--text-muted); padding: 5px 10px; position: relative;
+        }
+        .auth-tab-btn.active {
+            color: var(--brand-primary); font-weight: bold;
+        }
+        .auth-tab-btn.active::after {
+            content: ''; position: absolute; bottom: -12px; left: 0; width: 100%; height: 3px; background-color: var(--brand-primary);
+        }
+        
+        /* 會員大卡片 */
+        .member-profile-card {
+            background-color: var(--container-dark);
+            color: white;
+            border-radius: var(--radius-card);
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+        }
+        .member-avatar-info {
+            display: flex; align-items: center; gap: 20px;
+        }
+        .member-avatar {
+            width: 75px; height: 75px; background-color: var(--brand-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo" onclick="navigateToPage('buyer-home')">
+                🛍️ 簡單買 <span style="font-size:14px; background:var(--brand-secondary); color:#fff; padding:2px 8px; border-radius:10px; font-weight:normal;">EasyBuy</span>
+            </div>
+            
+            <div class="nav-group">
+                <button class="nav-btn active" id="nav-home" onclick="navigateToPage('buyer-home')">首頁</button>
+                <button class="nav-btn" id="nav-mall" onclick="navigateToPage('buyer-mall')">購物商城</button>
+                
+                <span id="auth-nav-links" style="display: none; gap: 12px;">
+                    <button class="nav-btn" id="nav-order" onclick="navigateToPage('buyer-order')">我的訂單</button>
+                    <button class="nav-btn" id="nav-seller" onclick="navigateToPage('seller-main')">賣家後台</button>
+                </span>
+                
+                <div class="nav-divider"></div>
+
+                <button class="nav-btn" id="nav-user" onclick="handleUserNavClick()">👤 登入 / 註冊</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="web-container">
+
+        <div id="page-buyer-home" class="page active">
+            <div class="hero-section">
+                <h1>發現居所的微小美學</h1>
+                <p>嚴選極簡居家裝飾與高機能數位周邊，重塑您的日常儀式感。</p>
+                <button class="btn-brand-primary" style="box-shadow:none;" onclick="navigateToPage('buyer-mall')">前往市集探索</button>
+            </div>
+            <div class="section-title">🔥 本週熱門市集推薦</div>
+            <div class="prod-grid" id="home-featured-container">
+                </div>
+        </div>
+
+        <div id="page-buyer-mall" class="page">
+            <div class="mall-layout">
+                <aside class="category-sidebar">
+                    <div class="category-title">商品分類</div>
+                    <button class="category-item active" id="cat-all" onclick="filterCategory('全部')">
+                        <span>全部商品</span> <span class="category-count" id="count-all">0</span>
+                    </button>
+                    <button class="category-item" id="cat-美學" onclick="filterCategory('生活美學')">
+                        <span>生活美學</span> <span class="category-count" id="count-美學">0</span>
+                    </button>
+                    <button class="category-item" id="cat-極客" onclick="filterCategory('數位極客')">
+                        <span>數位極客</span> <span class="category-count" id="count-極客">0</span>
+                    </button>
+                    <button class="category-item" id="cat-研務" onclick="filterCategory('工作研務')">
+                        <span>工作研務</span> <span class="category-count" id="count-研務">0</span>
+                    </button>
+                </aside>
+
+                <section style="flex:1;">
+                    <div class="search-row-box">
+                        <h2 style="font-size:22px;" id="current-category-title">全部商品</h2>
+                        <div class="search-box">
+                            <span>🔍</span>
+                            <input type="text" id="mall-search-input" oninput="handleSearchFilter()" placeholder="輸入關鍵字搜尋..."/>
+                        </div>
+                    </div>
+                    <div class="prod-grid" id="mall-products-container">
+                        </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="page-buyer-checkout" class="page">
+            <div class="wide-card">
+                <div class="section-title">🛒 確認訂單內容</div>
+                <div class="checkout-grid">
+                    <div>
+                        <div style="background-color:var(--bg-canvas); padding:20px; border-radius:15px; margin-bottom:20px;" id="checkout-prod-summary"></div>
+                        <div style="padding:0 10px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                <span>商品小計</span><span id="checkout-subtotal">NT$ 0</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                <span>運費總計</span><span>NT$ 60</span>
+                            </div>
+                            <hr style="border:none; border-top:1px dashed var(--border-light); margin:15px 0;"/>
+                            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:18px; color:var(--brand-primary);">
+                                <span>實付總額</span><span id="checkout-final-total">NT$ 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-capsule"><label>收件人姓名</label><input type="text" value="王小明"/></div>
+                        <div class="input-capsule"><label>手機號碼</label><input type="text" value="0912-345-678"/></div>
+                        <div class="input-capsule"><label>收件地址</label><input type="text" value="台北市信義區信義路五段7號"/></div>
+                        <div class="input-capsule">
+                            <label>付款方式</label>
+                            <select>
+                                <option>貨到付款</option>
+                                <option>信用卡線上刷卡</option>
+                                <option>LINE Pay / 街口支付</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:15px; margin-top:25px;">
+                            <button class="btn-dark-primary" style="flex:1;" onclick="navigateToPage('buyer-mall')">返回大廳</button>
+                            <button class="btn-brand-primary" style="flex:1;" onclick="openModal('modal-confirm-order')">提交訂單</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-buyer-order" class="page">
+            <div class="section-title">📦 我的訂單與物流追蹤</div>
+            <div id="orders-list-container"></div>
+        </div>
+
+        <div id="page-seller-main" class="page">
+            <div class="seller-dashboard">
+                <div class="seller-menu">
+                    <div style="text-align:center; padding:10px 0 20px 0; border-bottom:1px solid var(--border-light); margin-bottom:15px;">
+                        <div style="font-size:36px;">🏪</div>
+                        <div style="font-weight:bold; font-size:16px; margin-top:5px;">阿明的生活選物店</div>
+                    </div>
+                    <button class="seller-menu-item active" id="menu-seller-prods" onclick="switchSellerSubSection('prods')">📦 賣場商品管理</button>
+                    <button class="seller-menu-item" id="menu-seller-add" onclick="switchSellerSubSection('add')">➕ 上架全新商品</button>
+                </div>
+                <div class="seller-content" style="flex:1;">
+                    <div id="seller-sub-prods">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                            <h3 style="font-size:20px; color:var(--text-primary);">現有上架商品清單</h3>
+                            <button class="btn-brand-secondary" style="padding:8px 20px; font-size:14px;" onclick="switchSellerSubSection('add')">＋ 快速上架</button>
+                        </div>
+                        <div id="seller-products-list"></div>
+                    </div>
+                    <div id="seller-sub-add" style="display:none;">
+                        <div class="wide-card">
+                            <div class="section-title" id="seller-form-title">➕ 上架全新商品資訊</div>
+                            <div style="display:grid; grid-template-columns:1fr 2fr; gap:25px; margin-top:15px;">
+                                <div style="border:2px dashed var(--border-light); border-radius:15px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; background:#fff; cursor:pointer;">
+                                    <span style="font-size:40px;">📷</span>
+                                    <span style="font-size:13px; color:var(--text-muted); margin-top:8px;">上傳商品主圖預覽</span>
+                                </div>
+                                <div>
+                                    <input type="hidden" id="form-product-id" value=""/>
+                                    <div class="input-capsule"><label>商品名稱</label><input type="text" id="form-product-name"/></div>
+                                    <div class="input-capsule">
+                                        <label>商品類別</label>
+                                        <select id="form-product-category">
+                                            <option>生活美學</option>
+                                            <option>數位極客</option>
+                                            <option>工作研務</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-capsule"><label>設定售價</label><input type="number" id="form-product-price"/></div>
+                                    <div class="input-capsule"><label>初始庫存</label><input type="number" id="form-product-stock"/></div>
+                                    <div class="input-capsule" style="align-items:flex-start; border-radius:15px;">
+                                        <label style="margin-top:5px;">商品描述</label>
+                                        <textarea id="form-product-desc" rows="3"></textarea>
+                                    </div>
+                                    <div style="display:flex; gap:15px; margin-top:20px; justify-content:flex-end;">
+                                        <button class="btn-dark-primary" style="padding:10px 25px;" onclick="switchSellerSubSection('prods')">取消</button>
+                                        <button class="btn-brand-primary" style="padding:10px 25px;" onclick="handleSaveProduct()">確認保存並發布</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-auth" class="page">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" id="tab-login" onclick="switchAuthTab('login')">會員登入</button>
+                    <button class="auth-tab-btn" id="tab-register" onclick="switchAuthTab('register')">新用戶註冊</button>
+                </div>
+                <div id="auth-login-section">
+                    <div class="input-capsule"><label>帳號</label><input type="text" id="login-username" value=""/></div>
+                    <div class="input-capsule"><label>密碼</label><input type="password" id="login-pwd" value=""/></div>
+                    <button class="btn-brand-primary" style="width:100%; margin-top:15px;" onclick="handleLogin()">安全登入</button>
+                </div>
+                <div id="auth-register-section" style="display:none;">
+                    <div id="reg-step-1">
+                        <div class="input-capsule"><label>真實姓名</label><input type="text" id="reg-name" placeholder="請輸入姓名"/></div>
+                        <div class="input-capsule"><label>手機號碼</label><input type="text" id="reg-phone" placeholder="09XX-XXX-XXX"/></div>
+                        <button class="btn-brand-secondary" style="width:100%; margin-top:10px;" onclick="document.getElementById('reg-step-1').style.display='none'; document.getElementById('reg-step-2').style.display='block';">下一步：設定密碼</button>
+                    </div>
+                    <div id="reg-step-2" style="display:none;">
+                        <div class="input-capsule"><label>電子信箱</label><input type="text" id="reg-email" placeholder="設定為登入帳號"/></div>
+                        <div class="input-capsule"><label>設定密碼</label><input type="password" id="reg-pwd" placeholder="至少6個字符"/></div>
+                        <div class="input-capsule"><label>確認密碼</label><input type="password" id="reg-pwd-confirm" placeholder="請再輸入一次密碼"/></div>
+                        <button class="btn-brand-primary" style="width:100%; margin-top:15px;" onclick="handleRegisterComplete()">完成註冊並登入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-member-center" class="page">
+            <div class="member-profile-card">
+                <div class="member-avatar-info">
+                    <div class="member-avatar">👑</div>
+                    <div>
+                        <h2 style="font-size:22px; margin-bottom:5px;" id="profile-display-name">王小明</h2>
+                        <p id="profile-joined-date" style="font-size:14px; color:#edeae4;">加入時間：--</p>
+                    </div>
+                </div>
+                <button class="btn-brand-secondary" style="padding:8px 20px; font-size:14px;" onclick="navigateToPage('member-edit')">修改資料</button>
+            </div>
+            <div class="section-title">🔒 帳戶偏好設定</div>
+            <div style="background:#fff; border-radius:var(--radius-card); padding:25px; border:1px solid var(--border-light); display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div>
+                    <p style="font-weight:bold; margin-bottom:8px;">通知設定</p>
+                    <label style="display:block; margin-bottom:8px; color:var(--text-muted);"><input type="checkbox" checked/> 接受訂單物流狀態即時 Email 通知</label>
+                </div>
+                <div style="border-left:1px solid var(--border-light); padding-left:20px; display:flex; flex-direction:column; justify-content:center; align-items:flex-end;">
+                    <button class="btn-dark-primary" style="background-color:var(--accent-red); padding:10px 25px;" onclick="handleLogout()">登出當前帳號</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-member-edit" class="page">
+            <div class="wide-card" style="max-width:600px; margin: 0 auto;">
+                <div class="section-title">✏️ 編輯個人基本資料</div>
+                <div class="input-capsule"><label>姓氏</label><input type="text" value="王"/></div>
+                <div class="input-capsule"><label>名字</label><input type="text" id="edit-firstname" value="小明"/></div>
+                <div class="input-capsule"><label>手機號碼</label><input type="text" value="0912-345-678"/></div>
+                <div style="display:flex; gap:15px; margin-top:25px;">
+                    <button class="btn-dark-primary" style="flex:1;" onclick="navigateToPage('member-center')">取消返回</button>
+                    <button class="btn-brand-primary" style="flex:1;" onclick="openModal('modal-save-profile')">確認儲存</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="modal-save-profile" class="modal-mask"><div class="custom-dialog"><div class="dialog-text">💡 確定要更新儲存您的個人資料嗎？</div><div class="dialog-buttons"><button class="dialog-btn dialog-btn-secondary" onclick="closeModal('modal-save-profile')">繼續編輯</button><button class="dialog-btn dialog-btn-primary" onclick="confirmSaveProfile()">確認更新</button></div></div></div>
+    <div id="modal-confirm-order" class="modal-mask"><div class="custom-dialog"><div class="dialog-text">🛒 確認送出訂單並進入備貨流程？</div><div class="dialog-buttons"><button class="dialog-btn dialog-btn-secondary" onclick="closeModal('modal-confirm-order')">再想想</button><button class="dialog-btn dialog-btn-primary" onclick="confirmPlaceOrder()">確認下單</button></div></div></div>
+    <div id="modal-seller-relist" class="modal-mask"><div class="custom-dialog"><div class="dialog-text">♻️ 您確定要將此經典商品重新上架至市集大廳嗎？</div><div class="dialog-buttons"><button class="dialog-btn dialog-btn-secondary" onclick="closeModal('modal-seller-relist')">取消</button><button class="dialog-btn dialog-btn-primary" id="btn-confirm-relist">確認上架</button></div></div></div>
+
+    <script>
+        // --- 通用函數 ---
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 初始化用戶狀態
+        function initializeUserState() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedToken = localStorage.getItem('authToken');
+            
+            if (savedUser && savedToken) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    currentUser.token = savedToken;
+                    currentUser.isLoggedIn = true;
+                    updateUserNavUI();
+                } catch (e) {
+                    console.error('無法恢復用戶狀態:', e);
+                }
+            }
+        }
+
+        // --- [修正 3] 預設變更為「未登入」狀態 ---
+        let currentUser = { 
+            isLoggedIn: false, 
+            name: "",
+            id: null,
+            username: "",
+            email: "",
+            user_type: "",
+            store_name: "",
+            token: null
+        }; 
+        let selectedProductToBuy = null;
+        let activeRelistId = null;
+        let activeCategoryFilter = "全部";
+
+        let products = [
+            { id: 1, name: "極簡原木微光檯燈", price: 1480, category: "生活美學", icon: "💡", stock: 12, status: "onsale", desc: "嚴選北美胡桃木製成，觸控三段式調光，為深夜的工作研務注入一絲溫暖光芒。" },
+            { id: 2, name: "航太級鋁合金人體工學架", price: 2280, category: "數位極客", icon: "💻", stock: 8, status: "onsale", desc: "多角度自由調節，完美貼合視線，防滑矽膠極致保護，極客桌面必備單品。" },
+            { id: 3, name: "工匠手作植鞣皮夾", price: 3200, category: "生活美學", icon: "💼", stock: 5, status: "onsale", desc: "純手工雙針手縫，選用歐洲頂級植鞣牛皮，隨時間推移展現獨一無二的溫潤色澤。" },
+            { id: 4, name: "高對比電子紙墨水桌鐘", price: 1850, category: "數位極客", icon: "⏱️", stock: 14, status: "onsale", desc: "全視角清晰可讀，內建極簡微縮番茄鐘工作法與多時區排版布局。" },
+            { id: 5, name: "高磅數羊毛氈隨身筆電包", price: 980, category: "工作研務", icon: "📁", stock: 20, status: "onsale", desc: "精選高密度抗震保護材質，多夾層俐落收納核心數位硬體工具。" },
+            { id: 6, name: "復古雙色高磅數筆記本", price: 420, category: "工作研務", icon: "📓", stock: 25, status: "onsale", desc: "180度完全平攤設計，選用頂級歐盟環保道林紙，不易透墨。" },
+            { id: 7, name: "多功能不鏽鋼隨行保溫杯", price: 890, category: "生活美學", icon: "☕", stock: 0, status: "offsale", desc: "真空雙層保溫技術，長效保冷保熱24小時，磨砂防滑杯身。" }
+        ];
+
+        let orders = [];
+
+        window.onload = function() {
+            initializeUserState();
+            renderFeaturedProducts();
+            calculateCategoryCounts();
+            renderMallProducts();
+            renderSellerProducts();
+            renderOrders();
+            updateUserNavUI();
+        }
+
+        // --- 核心單頁切換路由 ---
+        function navigateToPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if(targetPage) targetPage.classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            if (pageId === 'buyer-home') document.getElementById('nav-home').classList.add('active');
+            if (pageId === 'buyer-mall') document.getElementById('nav-mall').classList.add('active');
+            if (pageId === 'buyer-order') document.getElementById('nav-order').classList.add('active');
+            if (pageId === 'seller-main') document.getElementById('nav-seller').classList.add('active');
+            if (pageId === 'member-center' || pageId === 'auth') document.getElementById('nav-user').classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        // --- 首頁：渲染前三筆精選推薦 ---
+        function renderFeaturedProducts() {
+            const container = document.getElementById('home-featured-container');
+            container.innerHTML = '';
+            products.filter(p => p.status === 'onsale').slice(0, 3).forEach(prod => {
+                container.innerHTML += createProductCardHTML(prod);
+            });
+        }
+
+        // --- 商城：計算分類下的動態件數 ---
+        function calculateCategoryCounts() {
+            const onsaleProds = products.filter(p => p.status === 'onsale');
+            document.getElementById('count-all').innerText = onsaleProds.length;
+            document.getElementById('count-美學').innerText = onsaleProds.filter(p => p.category === '生活美學').length;
+            document.getElementById('count-極客').innerText = onsaleProds.filter(p => p.category === '數位極客').length;
+            document.getElementById('count-研務').innerText = onsaleProds.filter(p => p.category === '工作研務').length;
+        }
+
+        // --- 商城：點擊側欄進行分類過濾 ---
+        function filterCategory(categoryName) {
+            activeCategoryFilter = categoryName;
+            document.getElementById('current-category-title').innerText = categoryName === '全部' ? '全部商品' : categoryName;
+            
+            // 更新 Sidebar 樣式焦點
+            document.querySelectorAll('.category-item').forEach(btn => btn.classList.remove('active'));
+            if(categoryName === '全部') document.getElementById('cat-all').classList.add('active');
+            if(categoryName === '生活美學') document.getElementById('cat-美學').classList.add('active');
+            if(categoryName === '數位極客') document.getElementById('cat-極客').classList.add('active');
+            if(categoryName === '工作研務') document.getElementById('cat-研務').classList.add('active');
+
+            renderMallProducts();
+        }
+
+        function handleSearchFilter() {
+            renderMallProducts();
+        }
+
+        function renderMallProducts() {
+            const container = document.getElementById('mall-products-container');
+            container.innerHTML = '';
+            
+            const keyword = document.getElementById('mall-search-input').value.trim().toLowerCase();
+
+            const filtered = products.filter(p => {
+                const isMatchStatus = p.status === 'onsale';
+                const isInStock = Number(p.stock) > 0;
+                const isMatchCat = (activeCategoryFilter === '全部' || p.category === activeCategoryFilter);
+                const isMatchKey = p.name.toLowerCase().includes(keyword) || p.desc.toLowerCase().includes(keyword);
+                return isMatchStatus && isInStock && isMatchCat && isMatchKey;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted); font-weight:bold;">沒有找到符合條件的質感好物。</div>`;
+                return;
+            }
+
+            filtered.forEach(prod => {
+                container.innerHTML += createProductCardHTML(prod);
+            });
+        }
+
+        function createProductCardHTML(prod) {
+            return `
+                <div class="prod-card">
+                    <div class="prod-img-placeholder">${prod.icon}</div>
+                    <div class="prod-info">
+                        <div class="prod-title">${prod.name}</div>
+                        <div class="prod-desc">${prod.desc}</div>
+                        <div class="prod-meta-row">
+                            <div class="prod-price">NT$ ${prod.price.toLocaleString()}</div>
+                            <button class="btn-brand-primary" style="padding: 6px 18px; font-size:14px;" onclick="startPurchaseProcess(${prod.id})">立即購買</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 交易流程控制 ---
+        function startPurchaseProcess(productId) {
+            selectedProductToBuy = products.find(p => p.id === productId);
+            if (!selectedProductToBuy) return;
+
+            document.getElementById('checkout-prod-summary').innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:24px;">${selectedProductToBuy.icon}</span>
+                    <span style="font-weight:bold; flex:1; margin-left:15px;">${selectedProductToBuy.name} x 1</span>
+                    <span style="font-weight:bold;">NT$ ${selectedProductToBuy.price.toLocaleString()}</span>
+                </div>
+            `;
+            document.getElementById('checkout-subtotal').innerText = `NT$ ${selectedProductToBuy.price.toLocaleString()}`;
+            document.getElementById('checkout-final-total').innerText = `NT$ ${(selectedProductToBuy.price + 60).toLocaleString()}`;
+            navigateToPage('buyer-checkout');
+        }
+
+        function confirmPlaceOrder() {
+            closeModal('modal-confirm-order');
+            loadOrdersFromApi().catch(console.error);
+            navigateToPage('buyer-order');
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('orders-list-container');
+            container.innerHTML = '';
+            if (!orders.length) {
+                container.innerHTML = '<div class="wide-card" style="text-align:center; color:var(--text-muted); font-weight:bold;">目前沒有訂單</div>';
+                return;
+            }
+            orders.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'wide-card';
+                let timelineHtml = '';
+                order.statusTimeline.forEach(node => {
+                    timelineHtml += `
+                        <div class="timeline-node ${node.active ? 'active-node' : ''}">
+                            <div class="timeline-meta"><span>${node.title}</span><span style="font-size:13px; font-weight:normal; color:var(--text-muted);">${node.time}</span></div>
+                            <div class="timeline-desc">${node.desc}</div>
+                        </div>
+                    `;
+                });
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--text-muted); margin-bottom:15px; background:var(--bg-canvas); padding:8px 15px; border-radius:8px;">
+                        <span>單號：${order.id}</span><span style="color:var(--brand-primary); font-weight:bold;">交易處理中</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:15px; padding-bottom:15px; border-bottom:1px solid var(--border-light);">
+                        <div style="font-size:32px;">${order.icon}</div>
+                        <div style="flex:1;">
+                            <div style="font-weight:bold; font-size:16px;">${order.productName}</div>
+                            <div style="font-size:13px; color:var(--text-muted); margin-top:3px;">數量：${order.qty} 件 ｜ 付款：${order.paymentMethod}</div>
+                        </div>
+                        <div style="font-size:18px; font-weight:800; color:var(--text-primary);">實付 NT$ ${order.totalPrice.toLocaleString()}</div>
+                    </div>
+                    <div style="font-weight:bold; font-size:14px; margin:15px 0 10px 0;">📦 物流配送進度即時追蹤</div>
+                    <div class="timeline-container">${timelineHtml}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- 賣家後台管理 ---
+        function switchSellerSubSection(subSectionId) {
+            document.getElementById('seller-sub-prods').style.display = subSectionId === 'prods' ? 'block' : 'none';
+            document.getElementById('seller-sub-add').style.display = subSectionId === 'add' ? 'block' : 'none';
+            document.getElementById('menu-seller-prods').classList.toggle('active', subSectionId === 'prods');
+            document.getElementById('menu-seller-add').classList.toggle('active', subSectionId === 'add');
+            if(subSectionId === 'add') {
+                document.getElementById('seller-form-title').innerText = "➕ 上架全新商品資訊";
+                document.getElementById('form-product-id').value = '';
+                document.getElementById('form-product-name').value = '';
+                document.getElementById('form-product-price').value = '';
+            document.getElementById('form-product-stock').value = '';
+            if (document.getElementById('form-product-specifications')) document.getElementById('form-product-specifications').value = '';
+            document.getElementById('form-product-desc').value = '';
+            }
+        }
+
+        function renderSellerProducts() {
+            const container = document.getElementById('seller-products-list');
+            container.innerHTML = '';
+            products.forEach(prod => {
+                const item = document.createElement('div');
+                item.className = 'wide-card';
+                item.style.padding = '20px'; item.style.marginBottom = '15px';
+                item.style.display = 'flex'; item.style.alignItems = 'center'; item.style.justifyContent = 'space-between';
+                const isOny = prod.status === 'onsale';
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:15px; flex:1;">
+                        <div style="font-size:28px; background:var(--bg-canvas); width:50px; height:50px; display:flex; align-items:center; justify-content:center; border-radius:10px;">${prod.icon}</div>
+                        <div>
+                            <div style="font-weight:bold; font-size:16px;">${prod.name}</div>
+                            <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">售價: <span style="color:var(--brand-primary); font-weight:bold;">NT$ ${prod.price}</span> ｜ 庫存: ${prod.stock} 件</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span class="seller-status-badge ${isOny ? 'badge-onsale' : 'badge-offsale'}">${isOny ? '販售中 onsale' : '已下架 offsale'}</span>
+                        <button class="tag-btn" style="padding:5px 12px; font-size:13px;" onclick="startEditProduct(${prod.id})">編輯</button>
+                        ${isOny ? 
+                            `<button class="tag-btn" style="padding:5px 12px; font-size:13px; color:var(--accent-red); border-color:var(--accent-red);" onclick="toggleProductStatus(${prod.id}, 'offsale')">下架</button>` : 
+                            `<button class="tag-btn" style="padding:5px 12px; font-size:13px; color:var(--brand-primary); border-color:var(--brand-primary);" onclick="triggerRelistModal(${prod.id})">重新上架</button>`
+                        }
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleProductStatus(id, newStatus) {
+            const prod = products.find(p => p.id === id);
+            if(prod) {
+                prod.status = newStatus;
+                calculateCategoryCounts();
+                renderSellerProducts();
+                renderMallProducts();
+                renderFeaturedProducts();
+            }
+        }
+
+        function triggerRelistModal(id) {
+            activeRelistId = id;
+            openModal('modal-seller-relist');
+            document.getElementById('btn-confirm-relist').onclick = function() {
+                toggleProductStatus(activeRelistId, 'onsale');
+                closeModal('modal-seller-relist');
+            }
+        }
+
+        function startEditProduct(id) {
+            const prod = products.find(p => p.id === id);
+            if(!prod) return;
+            switchSellerSubSection('add');
+            document.getElementById('seller-form-title').innerText = "✏️ 修改與變更商品資訊";
+            document.getElementById('form-product-id').value = prod.id;
+            document.getElementById('form-product-name').value = prod.name;
+            document.getElementById('form-product-category').value = prod.category;
+            document.getElementById('form-product-price').value = prod.price;
+            document.getElementById('form-product-stock').value = prod.stock;
+            document.getElementById('form-product-desc').value = prod.desc;
+        }
+
+        function handleSaveProduct() {
+            const idVal = document.getElementById('form-product-id').value;
+            const name = document.getElementById('form-product-name').value;
+            const category = document.getElementById('form-product-category').value;
+            const price = parseInt(document.getElementById('form-product-price').value) || 0;
+            const stock = parseInt(document.getElementById('form-product-stock').value) || 0;
+            const desc = document.getElementById('form-product-desc').value;
+            if(!name) { alert("請填寫商品名稱！"); return; }
+            if(idVal) {
+                const prod = products.find(p => p.id === parseInt(idVal));
+                if(prod) { prod.name = name; prod.category = category; prod.price = price; prod.stock = stock; prod.desc = desc; }
+            } else {
+                products.push({ id: products.length + 1, name: name, price: price, category: category, icon: "📦", stock: stock, status: "onsale", desc: desc });
+            }
+            calculateCategoryCounts();
+            renderSellerProducts();
+            renderMallProducts();
+            renderFeaturedProducts();
+            switchSellerSubSection('prods');
+        }
+
+        // --- 會員認證與權限核心控制 ---
+        function handleUserNavClick() {
+            currentUser.isLoggedIn ? navigateToPage('member-center') : navigateToPage('auth');
+        }
+
+        function updateUserNavUI() {
+            const navUserBtn = document.getElementById('nav-user');
+            const authLinks = document.getElementById('auth-nav-links');
+            if(currentUser.isLoggedIn) {
+                navUserBtn.innerText = `👤 ${currentUser.name} 的空間`;
+                authLinks.style.display = 'flex'; // 開啟隱藏選單
+            } else {
+                navUserBtn.innerText = `👤 登入 / 註冊`;
+                authLinks.style.display = 'none';  // 隱藏選單
+            }
+        }
+
+        function switchAuthTab(type) {
+            document.getElementById('auth-login-section').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('auth-register-section').style.display = type === 'register' ? 'block' : 'none';
+            document.getElementById('tab-login').classList.toggle('active', type === 'login');
+            document.getElementById('tab-register').classList.toggle('active', type === 'register');
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-pwd').value;
+
+            if (!username || !password) {
+                alert('請填入帳號和密碼');
+                return;
+            }
+
+            // 調用API登入
+            fetch('/api/users/api/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 存儲用戶信息
+                    const userData = data.user;
+                    currentUser.isLoggedIn = true;
+                    currentUser.id = userData.id;
+                    currentUser.username = userData.username;
+                    currentUser.email = userData.email;
+                    currentUser.name = userData.username;  // 用username作為display name
+                    currentUser.user_type = userData.user_type;
+                    currentUser.store_name = userData.store_name;
+                    currentUser.token = data.token;
+
+                    // 保存token到localStorage，以便後續API調用使用
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                    updateUserNavUI();
+                    document.getElementById('profile-display-name').innerText = currentUser.username;
+                    
+                    // 清空表單
+                    document.getElementById('login-username').value = '';
+                    document.getElementById('login-pwd').value = '';
+                    
+                    alert('登入成功！');
+                    navigateToPage('buyer-home');
+                } else {
+                    alert('登入失敗：' + (data.message || '未知錯誤'));
+                }
+            })
+            .catch(error => {
+                console.error('登入錯誤:', error);
+                alert('登入出現錯誤，請稍後重試');
+            });
+        }
+
+        function handleLogout() {
+            // 調用API登出
+            fetch('/api/users/api/logout/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Token ' + currentUser.token,
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 清除用戶信息
+                    currentUser.isLoggedIn = false;
+                    currentUser.name = "";
+                    currentUser.id = null;
+                    currentUser.username = "";
+                    currentUser.email = "";
+                    currentUser.token = null;
+
+                    // 清除localStorage
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('currentUser');
+
+                    updateUserNavUI();
+                    alert('已登出');
+                    navigateToPage('buyer-home');
+                }
+            })
+            .catch(error => {
+                console.error('登出錯誤:', error);
+                // 即使API調用失敗，仍然清除本地數據
+                currentUser.isLoggedIn = false;
+                currentUser.name = "";
+                currentUser.token = null;
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                updateUserNavUI();
+                navigateToPage('buyer-home');
+            });
+        }
+
+        function handleRegisterComplete() {
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+            const username = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-pwd').value;
+            const password_confirm = document.getElementById('reg-pwd-confirm').value;
+
+            // 驗證表單
+            if (!name || !phone || !username || !password || !password_confirm) {
+                alert('請填入所有欄位');
+                return;
+            }
+
+            if (password !== password_confirm) {
+                alert('兩次輸入的密碼不一致');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('密碼至少需要6個字符');
+                return;
+            }
+
+            // 調用API註冊
+            fetch('/api/users/api/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: username,  // 使用email作為username
+                    phone: phone,
+                    password: password,
+                    password2: password_confirm,
+                    user_type: 'buyer'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 自動登入新建的帳號
+                    fetch('/api/users/api/login/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(loginData => {
+                        if (loginData.success) {
+                            const userData = loginData.user;
+                            currentUser.isLoggedIn = true;
+                            currentUser.id = userData.id;
+                            currentUser.username = userData.username;
+                            currentUser.email = userData.email;
+                            currentUser.name = userData.username;
+                            currentUser.user_type = userData.user_type;
+                            currentUser.store_name = userData.store_name;
+                            currentUser.token = loginData.token;
+
+                            localStorage.setItem('authToken', loginData.token);
+                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                            updateUserNavUI();
+                            document.getElementById('profile-display-name').innerText = currentUser.username;
+                            
+                            // 重置表單
+                            document.getElementById('reg-name').value = '';
+                            document.getElementById('reg-phone').value = '';
+                            document.getElementById('reg-email').value = '';
+                            document.getElementById('reg-pwd').value = '';
+                            document.getElementById('reg-pwd-confirm').value = '';
+                            document.getElementById('reg-step-1').style.display = 'block';
+                            document.getElementById('reg-step-2').style.display = 'none';
+
+                            alert('註冊並登入成功！');
+                            navigateToPage('buyer-home');
+                        } else {
+                            alert('登入失敗：' + (loginData.message || '未知錯誤'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('登入錯誤:', error);
+                        alert('自動登入出現錯誤，請手動登入');
+                    });
+                } else {
+                    alert('註冊失敗：' + JSON.stringify(data.errors));
+                }
+            })
+            .catch(error => {
+                console.error('註冊錯誤:', error);
+                alert('註冊出現錯誤，請稍後重試');
+            });
+        }
+
+        function confirmSaveProfile() {
+            closeModal('modal-save-profile');
+            const inputName = document.getElementById('edit-firstname').value;
+            if(inputName) {
+                currentUser.name = "王" + inputName;
+                document.getElementById('profile-display-name').innerText = currentUser.name;
+                updateUserNavUI();
+            }
+            navigateToPage('member-center');
+        }
+
+        // --- API integration fixes: profile name/avatar, seller-only products, uploads ---
+        let apiCategories = [];
+        let selectedCheckoutQuantity = 1;
+
+        function authHeaders(extraHeaders = {}) {
+            const headers = Object.assign({}, extraHeaders);
+            if (currentUser.token) headers.Authorization = 'Token ' + currentUser.token;
+            const csrfToken = getCookie('csrftoken');
+            if (csrfToken) headers['X-CSRFToken'] = csrfToken;
+            return headers;
+        }
+
+        function listPayload(data) {
+            return Array.isArray(data) ? data : (data.results || []);
+        }
+
+        function displayName(user) {
+            const fullName = `${user.last_name || ''}${user.first_name || ''}`.trim();
+            return fullName || user.username || user.email || '';
+        }
+
+        function applyUserData(user, token) {
+            currentUser.isLoggedIn = true;
+            currentUser.id = user.id;
+            currentUser.username = user.username;
+            currentUser.email = user.email || '';
+            currentUser.first_name = user.first_name || '';
+            currentUser.last_name = user.last_name || '';
+            currentUser.phone = user.phone || '';
+            currentUser.address = user.address || '';
+            currentUser.bio = user.bio || '';
+            currentUser.user_type = user.user_type || '';
+            currentUser.store_name = user.store_name || '';
+            currentUser.date_joined = user.date_joined || '';
+            currentUser.profile_picture_url = user.profile_picture_url || null;
+            currentUser.name = displayName(user);
+            if (token) currentUser.token = token;
+            localStorage.setItem('authToken', currentUser.token || '');
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUserNavUI();
+            refreshProfileDisplay();
+            refreshSellerBrand();
+            loadOrdersFromApi().catch(console.error);
+        }
+
+        function sellerBrandName() {
+            const name = currentUser.name || currentUser.username || '我的';
+            return `${name}的生活選物店`;
+        }
+
+        function refreshSellerBrand() {
+            const brandNode = document.getElementById('seller-store-name');
+            if (brandNode) brandNode.innerText = sellerBrandName();
+        }
+
+        function refreshProfileDisplay() {
+            const nameNode = document.getElementById('profile-display-name');
+            if (nameNode) nameNode.innerText = currentUser.name || currentUser.username || '';
+            const joinedNode = document.getElementById('profile-joined-date');
+            if (joinedNode) joinedNode.innerText = `加入時間：${formatDate(currentUser.date_joined)}`;
+
+            const avatar = document.querySelector('.member-avatar');
+            if (avatar) {
+                if (currentUser.profile_picture_url) {
+                    avatar.innerHTML = `<img src="${currentUser.profile_picture_url}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                } else {
+                    avatar.textContent = (currentUser.name || currentUser.username || '?').slice(0, 1);
+                }
+            }
+            refreshSellerBrand();
+        }
+
+        function ensureUploadInputs() {
+            const productDrop = document.querySelector('#seller-sub-add [style*="dashed"]');
+            if (productDrop && !document.getElementById('form-product-image')) {
+                productDrop.innerHTML = `
+                    <span style="font-size:40px;">+</span>
+                    <span style="font-size:13px; color:var(--text-muted); margin-top:8px;">上傳商品圖片</span>
+                    <input type="file" id="form-product-image" accept="image/*" style="margin-top:12px; max-width:180px;">
+                    <img id="form-product-image-preview" alt="" style="display:none; margin-top:12px; width:140px; height:100px; object-fit:cover; border-radius:10px;">
+                `;
+            }
+
+            const editInputs = document.querySelectorAll('#page-member-edit input');
+            if (editInputs[0] && !editInputs[0].id) editInputs[0].id = 'edit-lastname';
+            if (editInputs[1] && !editInputs[1].id) editInputs[1].id = 'edit-firstname';
+            if (editInputs[2] && !editInputs[2].id) editInputs[2].id = 'edit-phone';
+
+            const editCard = document.querySelector('#page-member-edit .wide-card');
+            if (editCard && !document.getElementById('edit-profile-picture')) {
+                const upload = document.createElement('div');
+                upload.className = 'input-capsule';
+                upload.innerHTML = '<label>頭像</label><input type="file" id="edit-profile-picture" accept="image/*">';
+                const buttons = editCard.querySelector('[style*="margin-top:25px"]');
+                editCard.insertBefore(upload, buttons);
+            }
+
+            ensureCommerceInputs();
+        }
+
+        function ensureCommerceInputs() {
+            const sellerTitle = document.querySelector('.seller-menu [style*="font-weight:bold"][style*="font-size:16px"]');
+            if (sellerTitle && !sellerTitle.id) sellerTitle.id = 'seller-store-name';
+            refreshSellerBrand();
+
+            const stockInput = document.getElementById('form-product-stock');
+            if (stockInput && !document.getElementById('form-product-specifications')) {
+                const wrap = document.createElement('div');
+                wrap.className = 'input-capsule';
+                wrap.style.alignItems = 'flex-start';
+                wrap.style.borderRadius = '15px';
+                wrap.innerHTML = '<label style="margin-top:5px;">商品規格</label><textarea id="form-product-specifications" rows="3" placeholder="例如：01 紅棕, 02 奶茶, 03 玫瑰"></textarea>';
+                stockInput.closest('.input-capsule').after(wrap);
+            }
+
+            const checkoutInputs = document.querySelectorAll('#page-buyer-checkout .checkout-grid input');
+            if (checkoutInputs[0] && !checkoutInputs[0].id) checkoutInputs[0].id = 'checkout-recipient-name';
+            if (checkoutInputs[1] && !checkoutInputs[1].id) checkoutInputs[1].id = 'checkout-recipient-phone';
+            if (checkoutInputs[2] && !checkoutInputs[2].id) checkoutInputs[2].id = 'checkout-recipient-address';
+            const checkoutSelect = document.querySelector('#page-buyer-checkout .checkout-grid select');
+            if (checkoutSelect && !checkoutSelect.id) checkoutSelect.id = 'checkout-payment-method';
+            if (checkoutSelect) {
+                const paymentValues = ['cod', 'credit_card', 'line_pay'];
+                Array.from(checkoutSelect.options).forEach((option, index) => {
+                    option.value = paymentValues[index] || 'cod';
+                });
+            }
+
+            const summary = document.getElementById('checkout-prod-summary');
+            if (summary && !document.getElementById('checkout-options')) {
+                const options = document.createElement('div');
+                options.id = 'checkout-options';
+                options.style.marginTop = '16px';
+                summary.after(options);
+            }
+
+            const regPhone = document.getElementById('reg-phone');
+            if (regPhone && !document.getElementById('reg-address')) {
+                const wrap = document.createElement('div');
+                wrap.className = 'input-capsule';
+                wrap.innerHTML = '<label>地址</label><input type="text" id="reg-address" placeholder="請輸入收件地址">';
+                regPhone.closest('.input-capsule').after(wrap);
+            }
+
+            const editPhone = document.getElementById('edit-phone');
+            const editCard = document.querySelector('#page-member-edit .wide-card');
+            if (editPhone && editCard && !document.getElementById('edit-address')) {
+                const wrap = document.createElement('div');
+                wrap.className = 'input-capsule';
+                wrap.innerHTML = '<label>地址</label><input type="text" id="edit-address">';
+                editPhone.closest('.input-capsule').after(wrap);
+            }
+        }
+
+        function fillProfileForm() {
+            ensureUploadInputs();
+            const lastName = document.getElementById('edit-lastname');
+            const firstName = document.getElementById('edit-firstname');
+            const phone = document.getElementById('edit-phone');
+            const address = document.getElementById('edit-address');
+            if (lastName) lastName.value = currentUser.last_name || '';
+            if (firstName) firstName.value = currentUser.first_name || '';
+            if (phone) phone.value = currentUser.phone || '';
+            if (address) address.value = currentUser.address || '';
+        }
+
+        function toLocalProduct(prod) {
+            return {
+                id: prod.id,
+                name: prod.name,
+                price: Number(prod.price),
+                category: prod.category_name || '',
+                categoryId: prod.category,
+                icon: prod.image_url ? '' : '📦',
+                image_url: prod.image_url,
+                stock: prod.stock,
+                status: prod.status,
+                desc: prod.description || '',
+                specifications: prod.specifications || ''
+            };
+        }
+
+        function productMediaHTML(prod, size = 'large') {
+            if (prod.image_url) {
+                const height = size === 'small' ? '50px' : '180px';
+                return `<img src="${prod.image_url}" alt="${prod.name}" style="width:100%;height:${height};object-fit:cover;">`;
+            }
+            return prod.icon || '📦';
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '--';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '--';
+            return date.toLocaleString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatDate(value) {
+            if (!value) return '--';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '--';
+            return date.toLocaleDateString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        function paymentMethodLabel(value) {
+            const labels = {
+                cod: '貨到付款',
+                credit_card: '信用卡',
+                line_pay: 'LINE Pay'
+            };
+            return labels[value] || value || '--';
+        }
+
+        function toLocalOrder(order) {
+            return {
+                id: order.order_number,
+                productName: order.product_name || '商品已下架',
+                icon: order.product_icon || '📦',
+                qty: order.quantity,
+                paymentMethod: paymentMethodLabel(order.payment_method),
+                totalPrice: Number(order.total_price || 0),
+                statusTimeline: [
+                    {
+                        title: '訂單建立成功',
+                        time: formatDateTime(order.created_at),
+                        desc: '您的訂單已成功寫入資料庫。',
+                        active: true
+                    }
+                ]
+            };
+        }
+
+        async function loadOrdersFromApi() {
+            if (!currentUser.isLoggedIn || !currentUser.token) {
+                orders = [];
+                renderOrders();
+                return [];
+            }
+            const response = await fetch('/api/products/orders/', {
+                headers: authHeaders()
+            });
+            if (!response.ok) {
+                orders = [];
+                renderOrders();
+                return [];
+            }
+            const data = await response.json();
+            orders = listPayload(data).map(toLocalOrder);
+            renderOrders();
+            return orders;
+        }
+
+        async function loadCategoriesFromApi() {
+            const response = await fetch('/api/products/categories/');
+            const data = await response.json();
+            apiCategories = listPayload(data);
+            const select = document.getElementById('form-product-category');
+            if (select && apiCategories.length) {
+                select.innerHTML = apiCategories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
+            }
+            return apiCategories;
+        }
+
+        async function loadProductsFromApi() {
+            const response = await fetch('/api/products/products/');
+            const data = await response.json();
+            products = listPayload(data).map(toLocalProduct);
+            calculateCategoryCounts();
+            renderFeaturedProducts();
+            renderMallProducts();
+        }
+
+        async function loadSellerProducts() {
+            if (!currentUser.isLoggedIn || !currentUser.token) {
+                renderSellerProducts([]);
+                return;
+            }
+            const response = await fetch('/api/products/products/my_products/', {
+                headers: authHeaders()
+            });
+            if (!response.ok) {
+                alert('請先登入後再查看賣家後台。');
+                return;
+            }
+            const data = await response.json();
+            renderSellerProducts(listPayload(data).map(toLocalProduct));
+        }
+
+        function renderSellerProducts(items = null) {
+            const container = document.getElementById('seller-products-list');
+            if (!container) return;
+            const sellerProducts = items || products.filter(p => p.seller === currentUser.id);
+            container.innerHTML = '';
+            if (!sellerProducts.length) {
+                container.innerHTML = '<div class="wide-card">目前沒有上架商品。</div>';
+                return;
+            }
+            sellerProducts.forEach(prod => {
+                const item = document.createElement('div');
+                item.className = 'wide-card';
+                item.style.padding = '20px';
+                item.style.marginBottom = '15px';
+                item.style.display = 'flex';
+                item.style.alignItems = 'center';
+                item.style.justifyContent = 'space-between';
+                const isOny = prod.status === 'onsale';
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:15px; flex:1;">
+                        <div style="background:var(--bg-canvas); width:50px; height:50px; display:flex; align-items:center; justify-content:center; border-radius:10px; overflow:hidden;">${productMediaHTML(prod, 'small')}</div>
+                        <div>
+                            <div style="font-weight:bold; font-size:16px;">${prod.name}</div>
+                            <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">NT$ ${prod.price.toLocaleString()} / 庫存 ${prod.stock}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span class="seller-status-badge ${isOny ? 'badge-onsale' : 'badge-offsale'}">${isOny ? '販售中' : '已下架'}</span>
+                        <button class="tag-btn" style="padding:5px 12px; font-size:13px;" onclick="startEditProduct(${prod.id})">編輯</button>
+                        <button class="tag-btn" style="padding:5px 12px; font-size:13px; color:${isOny ? 'var(--accent-red)' : 'var(--brand-primary)'};" onclick="toggleProductStatus(${prod.id}, '${isOny ? 'offsale' : 'onsale'}')">${isOny ? '下架' : '重新上架'}</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function createProductCardHTML(prod) {
+            return `
+                <div class="prod-card">
+                    <div class="prod-img-placeholder" style="overflow:hidden;">${productMediaHTML(prod)}</div>
+                    <div class="prod-info">
+                        <div class="prod-title">${prod.name}</div>
+                        <div class="prod-desc">${prod.desc}</div>
+                        <div class="prod-meta-row">
+                            <div class="prod-price">NT$ ${prod.price.toLocaleString()}</div>
+                            <button class="btn-brand-primary" style="padding: 6px 18px; font-size:14px;" onclick="startPurchaseProcess(${prod.id})">購買</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function toggleProductStatus(id, newStatus) {
+            const response = await fetch(`/api/products/products/${id}/`, {
+                method: 'PATCH',
+                headers: authHeaders({'Content-Type': 'application/json'}),
+                body: JSON.stringify({status: newStatus})
+            });
+            if (!response.ok) {
+                alert('商品狀態更新失敗。');
+                return;
+            }
+            await loadProductsFromApi();
+            await loadSellerProducts();
+        }
+
+        async function startEditProduct(id) {
+            ensureUploadInputs();
+            let prod = products.find(p => p.id === id);
+            if (!prod && currentUser.token) {
+                const response = await fetch('/api/products/products/my_products/', {headers: authHeaders()});
+                const data = await response.json();
+                prod = listPayload(data).map(toLocalProduct).find(p => p.id === id);
+            }
+            if (!prod) return;
+            switchSellerSubSection('add');
+            document.getElementById('seller-form-title').innerText = '修改商品資訊';
+            document.getElementById('form-product-id').value = prod.id;
+            document.getElementById('form-product-name').value = prod.name;
+            document.getElementById('form-product-category').value = prod.categoryId || '';
+            document.getElementById('form-product-price').value = prod.price;
+            document.getElementById('form-product-stock').value = prod.stock;
+            document.getElementById('form-product-specifications').value = prod.specifications || '';
+            document.getElementById('form-product-desc').value = prod.desc;
+            const preview = document.getElementById('form-product-image-preview');
+            if (preview && prod.image_url) {
+                preview.src = prod.image_url;
+                preview.style.display = 'block';
+            }
+        }
+
+        async function handleSaveProduct() {
+            ensureUploadInputs();
+            if (!currentUser.isLoggedIn || !currentUser.token) {
+                alert('請先登入後再刊登商品。');
+                navigateToPage('auth');
+                return;
+            }
+            const idVal = document.getElementById('form-product-id').value;
+            const formData = new FormData();
+            formData.append('name', document.getElementById('form-product-name').value);
+            const categoryValue = document.getElementById('form-product-category').value;
+            if (categoryValue) formData.append('category', categoryValue);
+            const rawPrice = document.getElementById('form-product-price').value || '0';
+            const cleanPrice = Number(String(rawPrice).replace(/,/g, '').replace(/NT\$/gi, '').trim());
+            if (!Number.isFinite(cleanPrice) || cleanPrice < 0) {
+                alert('請輸入正確的商品售價。');
+                return;
+            }
+            formData.append('price', cleanPrice.toFixed(2));
+            formData.append('stock', document.getElementById('form-product-stock').value || '0');
+            formData.append('specifications', document.getElementById('form-product-specifications')?.value || '');
+            formData.append('description', document.getElementById('form-product-desc').value || '');
+            formData.append('status', 'onsale');
+            const image = document.getElementById('form-product-image');
+            if (image && image.files[0]) formData.append('image', image.files[0]);
+
+            if (!formData.get('name')) {
+                alert('請輸入商品名稱。');
+                return;
+            }
+
+            const response = await fetch(idVal ? `/api/products/products/${idVal}/` : '/api/products/products/', {
+                method: idVal ? 'PATCH' : 'POST',
+                headers: authHeaders(),
+                body: formData
+            });
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                alert(`商品儲存失敗 (${response.status})：` + JSON.stringify(error));
+                return;
+            }
+            await loadProductsFromApi();
+            await loadSellerProducts();
+            switchSellerSubSection('prods');
+        }
+
+        function productSpecificationOptions(prod) {
+            return String(prod?.specifications || '')
+                .split(/[\n,\uFF0C\u3001;\uFF1B]+/)
+                .map(item => item.replace(/\s+/g, ' ').trim())
+                .filter(Boolean);
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function prefillCheckoutRecipient() {
+            const nameInput = document.getElementById('checkout-recipient-name');
+            const phoneInput = document.getElementById('checkout-recipient-phone');
+            const addressInput = document.getElementById('checkout-recipient-address');
+            if (nameInput) nameInput.value = currentUser.name || currentUser.username || '';
+            if (phoneInput) phoneInput.value = currentUser.phone || '';
+            if (addressInput) addressInput.value = currentUser.address || '';
+        }
+
+        function updateCheckoutTotals() {
+            if (!selectedProductToBuy) return;
+            const qtyInput = document.getElementById('checkout-quantity');
+            const maxStock = Math.max(Number(selectedProductToBuy.stock) || 1, 1);
+            selectedCheckoutQuantity = Math.min(Math.max(parseInt(qtyInput?.value || '1', 10) || 1, 1), maxStock);
+            if (qtyInput) qtyInput.value = selectedCheckoutQuantity;
+            const subtotal = selectedProductToBuy.price * selectedCheckoutQuantity;
+            document.getElementById('checkout-subtotal').innerText = `NT$ ${subtotal.toLocaleString()}`;
+            document.getElementById('checkout-final-total').innerText = `NT$ ${(subtotal + 60).toLocaleString()}`;
+            const nameNode = document.getElementById('checkout-summary-name');
+            if (nameNode) nameNode.innerText = `${selectedProductToBuy.name} x ${selectedCheckoutQuantity}`;
+            const priceNode = document.getElementById('checkout-summary-price');
+            if (priceNode) priceNode.innerText = `NT$ ${subtotal.toLocaleString()}`;
+        }
+
+        startPurchaseProcess = function(productId) {
+            ensureUploadInputs();
+            selectedProductToBuy = products.find(p => p.id === productId);
+            if (!selectedProductToBuy) return;
+            selectedCheckoutQuantity = 1;
+            const options = productSpecificationOptions(selectedProductToBuy);
+
+            document.getElementById('checkout-prod-summary').innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:24px;">${productMediaHTML(selectedProductToBuy, 'small')}</span>
+                    <span id="checkout-summary-name" style="font-weight:bold; flex:1; margin-left:15px;">${selectedProductToBuy.name} x 1</span>
+                    <span id="checkout-summary-price" style="font-weight:bold;">NT$ ${selectedProductToBuy.price.toLocaleString()}</span>
+                </div>
+            `;
+
+            const optionsNode = document.getElementById('checkout-options');
+            if (optionsNode) {
+                optionsNode.innerHTML = `
+                    ${options.length ? `
+                        <div class="input-capsule">
+                            <label>商品規格</label>
+                            <select id="checkout-selected-specification">
+                                <option value="">Select specification</option>
+                                ${options.map(option => `<option value="${escapeHtml(option)}" ${options.length === 1 ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}
+                            </select>
+                        </div>
+                    ` : ''}
+                    <div class="input-capsule">
+                        <label>購買數量</label>
+                        <input type="number" id="checkout-quantity" min="1" max="${selectedProductToBuy.stock}" value="1" oninput="updateCheckoutTotals()">
+                    </div>
+                `;
+            }
+
+            prefillCheckoutRecipient();
+            updateCheckoutTotals();
+            navigateToPage('buyer-checkout');
+        };
+
+        confirmPlaceOrder = async function() {
+            closeModal('modal-confirm-order');
+            ensureUploadInputs();
+            if (!currentUser.isLoggedIn || !currentUser.token) {
+                alert('請先登入後再下單。');
+                navigateToPage('auth');
+                return;
+            }
+            if (!selectedProductToBuy) return;
+
+            const specSelect = document.getElementById('checkout-selected-specification');
+            const specOptions = productSpecificationOptions(selectedProductToBuy);
+            const selectedSpecification = specSelect?.value || (specOptions.length === 1 ? specOptions[0] : '');
+            if (specSelect && !selectedSpecification) {
+                alert('請先選擇商品規格。');
+                return;
+            }
+
+            const payload = {
+                product_id: selectedProductToBuy.id,
+                quantity: selectedCheckoutQuantity,
+                selected_specification: selectedSpecification,
+                recipient_name: document.getElementById('checkout-recipient-name')?.value || '',
+                recipient_phone: document.getElementById('checkout-recipient-phone')?.value || '',
+                recipient_address: document.getElementById('checkout-recipient-address')?.value || '',
+                payment_method: document.getElementById('checkout-payment-method')?.value || 'cod'
+            };
+
+            const response = await fetch('/api/products/orders/create_order/', {
+                method: 'POST',
+                headers: authHeaders({'Content-Type': 'application/json'}),
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) {
+                alert(data.message || '訂單建立失敗。');
+                return;
+            }
+
+            await loadProductsFromApi().catch(console.error);
+            await loadOrdersFromApi().catch(console.error);
+            navigateToPage('buyer-order');
+        };
+
+        async function confirmSaveProfile() {
+            closeModal('modal-save-profile');
+            ensureUploadInputs();
+            const formData = new FormData();
+            formData.append('last_name', document.getElementById('edit-lastname')?.value || '');
+            formData.append('first_name', document.getElementById('edit-firstname')?.value || '');
+            formData.append('phone', document.getElementById('edit-phone')?.value || '');
+            formData.append('address', document.getElementById('edit-address')?.value || '');
+            const picture = document.getElementById('edit-profile-picture');
+            if (picture && picture.files[0]) formData.append('profile_picture', picture.files[0]);
+
+            const response = await fetch('/api/users/users/update_profile/', {
+                method: 'PATCH',
+                headers: authHeaders(),
+                body: formData
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                alert('會員資料更新失敗：' + JSON.stringify(data.errors || data));
+                return;
+            }
+            applyUserData(data.user);
+            navigateToPage('member-center');
+        }
+
+        const originalNavigateToPage = navigateToPage;
+        navigateToPage = function(pageId) {
+            originalNavigateToPage(pageId);
+            ensureUploadInputs();
+            if (pageId === 'member-edit') fillProfileForm();
+            if (pageId === 'seller-main') loadSellerProducts();
+            if (pageId === 'buyer-order') loadOrdersFromApi().catch(console.error);
+        };
+
+        const originalHandleLogin = handleLogin;
+        handleLogin = function() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-pwd').value;
+            fetch('/api/users/api/login/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+                body: JSON.stringify({username, password})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert(data.message || '登入失敗。');
+                    return;
+                }
+                applyUserData(data.user, data.token);
+                navigateToPage('buyer-home');
+            })
+            .catch(() => originalHandleLogin());
+        };
+
+        const originalHandleRegisterComplete = handleRegisterComplete;
+        handleRegisterComplete = function() {
+            const fullName = document.getElementById('reg-name').value.trim();
+            const phone = document.getElementById('reg-phone').value;
+            const address = document.getElementById('reg-address')?.value || '';
+            const username = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-pwd').value;
+            const password2 = document.getElementById('reg-pwd-confirm').value;
+            fetch('/api/users/api/register/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+                body: JSON.stringify({
+                    username,
+                    email: username,
+                    last_name: fullName.slice(0, 1),
+                    first_name: fullName.slice(1),
+                    phone,
+                    address,
+                    password,
+                    password2,
+                    user_type: 'buyer'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('註冊失敗：' + JSON.stringify(data.errors));
+                    return;
+                }
+                document.getElementById('login-username').value = username;
+                document.getElementById('login-pwd').value = password;
+                handleLogin();
+            })
+            .catch(() => originalHandleRegisterComplete());
+        };
+
+        const originalOnload = window.onload;
+        window.onload = async function() {
+            if (originalOnload) originalOnload();
+            ensureUploadInputs();
+            refreshProfileDisplay();
+            await loadCategoriesFromApi().catch(console.error);
+            await loadProductsFromApi().catch(console.error);
+            if (currentUser.isLoggedIn) {
+                fetch('/api/users/users/me/', {headers: authHeaders()})
+                    .then(response => response.ok ? response.json() : null)
+                    .then(user => {
+                        if (user) {
+                            applyUserData(user);
+                            loadOrdersFromApi().catch(console.error);
+                        }
+                    })
+                    .catch(console.error);
+            }
+        };
+
+        function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+    </script>
+</body>
+</html>
